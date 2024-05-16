@@ -1,74 +1,42 @@
 #
-# Copyright (C) 2024 The Android Open Source Project
+# Copyright (C) 2023 The Android Open Source Project
+# Copyright (C) 2023 SebaUbuntu's TWRP device tree generator
 #
 # SPDX-License-Identifier: Apache-2.0
 #
 
-LOCAL_PATH := device/infinix/X6739
+LOCAL_PATH := device/tecno/CK9n
 
-# Dynamic Partitions
-PRODUCT_USE_DYNAMIC_PARTITIONS := true
-
-# Api level
-PRODUCT_SHIPPING_API_LEVEL := 31
-
-# Treble
-BOARD_VNDK_VERSION := current
-PRODUCT_TARGET_VNDK_VERSION := 31
-
-# Platform
-PRODUCT_PLATFORM := MT6893
-
-# A/B
+# Virtual A/B
 ENABLE_VIRTUAL_AB := true
-
-# fastboot/d hal
-PRODUCT_PACKAGES += \
-    android.hardware.fastboot@1.0-impl-mock \
-    fastbootd
-    
-    # A/B
-AB_OTA_UPDATER := true
-AB_OTA_PARTITIONS += \
-    boot \
-    dtbo \
-    gz \
-    lk \
-    logo \
-    md1img \
-    preloader \
-    product \
-    scp \
-    spmfw \
-    sspm \
-    system \
-    system_ext \
-    tee \
-    vbmeta \
-    vbmeta_system \
-    vbmeta_vendor \
-    vendor
-    
-BOARD_USES_RECOVERY_AS_BOOT := true
+$(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 # A/B
 AB_OTA_POSTINSTALL_CONFIG += \
     RUN_POSTINSTALL_system=true \
     POSTINSTALL_PATH_system=system/bin/mtk_plpath_utils \
-    FILESYSTEM_TYPE_system=$(BOARD_SYSTEMIMAGE_FILE_SYSTEM_TYPE) \
+    FILESYSTEM_TYPE_system=erofs \
     POSTINSTALL_OPTIONAL_system=true
 
+AB_OTA_POSTINSTALL_CONFIG += \
+    RUN_POSTINSTALL_vendor=true \
+    POSTINSTALL_PATH_vendor=bin/checkpoint_gc \
+    FILESYSTEM_TYPE_vendor=erofs \
+    POSTINSTALL_OPTIONAL_vendor=true
 
 # Boot control HAL
 PRODUCT_PACKAGES += \
-    android.hardware.boot@1.0-impl \
-    android.hardware.boot@1.0-service
+    android.hardware.boot@1.2-service \
+    android.hardware.boot@1.2-mtkimpl \
+    android.hardware.boot@1.2-mtkimpl.recovery
+
+PRODUCT_PACKAGES_DEBUG += \
+    bootctl \
+    update_engine_client
 
 PRODUCT_PACKAGES += \
-    bootctrl.mt6893 \
-    libgptutils \
-    libz \
-    libcutils
+    bootctrl.$(PRODUCT_PLATFORM) \
+    bootctrl.$(PRODUCT_PLATFORM).recovery
 
 PRODUCT_PACKAGES += \
     otapreopt_script \
@@ -76,23 +44,35 @@ PRODUCT_PACKAGES += \
     update_engine \
     update_verifier \
     update_engine_sideload
-    
-    # MTK plpath utils
+
+# API
+PRODUCT_SHIPPING_API_LEVEL := 31
+
+# Dynamic partitions
+PRODUCT_USE_DYNAMIC_PARTITIONS := true
+
+# fastbootd
 PRODUCT_PACKAGES += \
-    mtk_plpath_utils \
-    mtk_plpath_utils.recovery
-    
-    # Boot control HAL
+    android.hardware.fastboot@1.0-impl-mock \
+    fastbootd
+
+# Health HAL
 PRODUCT_PACKAGES += \
-    android.hardware.boot@1.2-mtkimpl 
-    
-    # Additional Libraries
+    android.hardware.health@2.1-impl \
+    android.hardware.health@2.1-service
+
+# VNDK
+PRODUCT_TARGET_VNDK_VERSION := 31
+
+# Additional Libraries
 TARGET_RECOVERY_DEVICE_MODULES += \
     libkeymaster4 \
     libkeymaster41 \
-    libpuresoftkeymasterdevice
-    
-    RECOVERY_LIBRARY_SOURCE_FILES += \
+    libpuresoftkeymasterdevice \
+    libion
+
+RECOVERY_LIBRARY_SOURCE_FILES += \
     $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster4.so \
     $(TARGET_OUT_SHARED_LIBRARIES)/libkeymaster41.so \
-    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so
+    $(TARGET_OUT_SHARED_LIBRARIES)/libpuresoftkeymasterdevice.so \
+    $(TARGET_OUT_SHARED_LIBRARIES)/libion.so

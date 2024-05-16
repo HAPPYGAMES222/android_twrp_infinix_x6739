@@ -8,6 +8,8 @@
         vendor.transsion.hardware.security.hap_device.xml
         manifest_tranlog.xml
         manifest_tranlogconfig.xml
+        manifest_trandatacenter.xml
+        trans_sched_device.xml
         manifest_sensor_hidl_v2.xml
         manifest_audio.xml
         manifest_dsds.xml
@@ -625,6 +627,16 @@
         <fqname>@1.0::IHap/default</fqname>
     </hal>
     <hal format="hidl">
+        <name>vendor.transsion.hardware.trandatacenter</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>ITranDataCenter</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@1.0::ITranDataCenter/default</fqname>
+    </hal>
+    <hal format="hidl">
         <name>vendor.transsion.hardware.tranlog</name>
         <transport>hwbinder</transport>
         <version>1.0</version>
@@ -643,6 +655,16 @@
             <instance>default</instance>
         </interface>
         <fqname>@1.0::ITranLogConfig/default</fqname>
+    </hal>
+    <hal format="hidl">
+        <name>vendor.transsion.performance.sched</name>
+        <transport>hwbinder</transport>
+        <version>1.0</version>
+        <interface>
+            <name>ITransSched</name>
+            <instance>default</instance>
+        </interface>
+        <fqname>@1.0::ITransSched/default</fqname>
     </hal>
     <hal format="hidl">
         <name>vendor.trustonic.tee</name>
